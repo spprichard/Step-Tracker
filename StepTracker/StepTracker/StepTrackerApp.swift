@@ -1,6 +1,6 @@
 //
-//  Step_TrackerApp.swift
-//  Step Tracker
+//  StepTrackerApp.swift
+//  StepTracker
 //
 //  Created by Steven Prichard on 2024-05-05.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Step_TrackerApp: App {
+struct StepTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

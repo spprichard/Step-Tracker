@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Step Tracker
+//  StepTracker
 //
 //  Created by Steven Prichard on 2024-05-05.
 //
@@ -15,7 +15,6 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, world!")
         }
-        .padding()
     }
 }
 
