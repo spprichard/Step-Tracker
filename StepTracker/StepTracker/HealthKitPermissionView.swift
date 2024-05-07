@@ -6,8 +6,18 @@
 //
 
 import SwiftUI
+import HealthKitUI
 
 struct HealthKitPermissionView: View {
+    @Environment(HealthKitManager.self)
+    var hkManager
+    
+    @State
+    private var shouldConnectAppleHealth = false
+    
+    @Environment(\.dismiss)
+    private var dismiss
+    
     var body: some View {
         VStack(spacing: 125) {
             VStack(spacing: 16) {
@@ -24,11 +34,30 @@ struct HealthKitPermissionView: View {
             }.multilineTextAlignment(.center)
             
             Button("Connect Apple Health") {
-                print("TODO - Connect Apple Health")
+                shouldConnectAppleHealth = true
             }
             .buttonStyle(.borderedProminent)
             .tint(.pink)
-        }.padding(20)
+        }
+        .padding(20)
+        .healthDataAccessRequest(
+            store: hkManager.store,
+            shareTypes: HealthKitManager.writeTypes,
+            readTypes: HealthKitManager.readTypes,
+            trigger: shouldConnectAppleHealth,
+            completion: onConnectHealthKit
+        )
+    }
+    
+    private func onConnectHealthKit(result: Result<Bool, Error>) {
+        switch result {
+        case .success:
+            dismiss()
+        case .failure(let failure):
+            // TODO: Handle Error
+            print("❌ Unhandled Error: \(failure.localizedDescription)")
+            dismiss()
+        }
     }
     
     static let healthKitUsageDescription: String = """
@@ -40,4 +69,5 @@ struct HealthKitPermissionView: View {
 
 #Preview {
     HealthKitPermissionView()
+        .environment(HealthKitManager())
 }
