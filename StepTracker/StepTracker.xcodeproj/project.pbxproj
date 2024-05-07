@@ -12,6 +12,7 @@
 		B86445C92BE7C3EF008841EF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B86445C82BE7C3EF008841EF /* Assets.xcassets */; };
 		B86445CC2BE7C3EF008841EF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B86445CB2BE7C3EF008841EF /* Preview Assets.xcassets */; };
 		B8A12CCC2BE7E08A00C4AA9D /* HealthDataListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A12CCB2BE7E08A00C4AA9D /* HealthDataListView.swift */; };
+		B8A12CCE2BEAEF0E00C4AA9D /* HealthKitPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A12CCD2BEAEF0E00C4AA9D /* HealthKitPermissionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		B86445C82BE7C3EF008841EF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B86445CB2BE7C3EF008841EF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B8A12CCB2BE7E08A00C4AA9D /* HealthDataListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataListView.swift; sourceTree = "<group>"; };
+		B8A12CCD2BEAEF0E00C4AA9D /* HealthKitPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitPermissionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				B86445C42BE7C3EE008841EF /* StepTrackerApp.swift */,
+				B8A12CCD2BEAEF0E00C4AA9D /* HealthKitPermissionView.swift */,
 				B86445C62BE7C3EE008841EF /* DashboardView.swift */,
 				B8A12CCB2BE7E08A00C4AA9D /* HealthDataListView.swift */,
 				B86445C82BE7C3EF008841EF /* Assets.xcassets */,
@@ -142,6 +145,7 @@
 			files = (
 				B8A12CCC2BE7E08A00C4AA9D /* HealthDataListView.swift in Sources */,
 				B86445C72BE7C3EE008841EF /* DashboardView.swift in Sources */,
+				B8A12CCE2BEAEF0E00C4AA9D /* HealthKitPermissionView.swift in Sources */,
 				B86445C52BE7C3EE008841EF /* StepTrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
