@@ -21,4 +21,6 @@ final class HealthKitManager {
         HKQuantityType(.stepCount),
         HKQuantityType(.bodyMass)
     ]
+    
+    static let HasSeenPermissionSheetKey = "hasSeenPermissionSheet"
 }

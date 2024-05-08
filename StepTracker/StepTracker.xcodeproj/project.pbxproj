@@ -60,8 +60,8 @@
 			children = (
 				B8A12CCF2BEAF27700C4AA9D /* StepTracker.entitlements */,
 				B86445C42BE7C3EE008841EF /* StepTrackerApp.swift */,
-				B8A12CCD2BEAEF0E00C4AA9D /* HealthKitPermissionView.swift */,
 				B86445C62BE7C3EE008841EF /* DashboardView.swift */,
+				B8A12CCD2BEAEF0E00C4AA9D /* HealthKitPermissionView.swift */,
 				B8A12CCB2BE7E08A00C4AA9D /* HealthDataListView.swift */,
 				B8A12CD02BEAF3A900C4AA9D /* HealthKitManager.swift */,
 				B86445C82BE7C3EF008841EF /* Assets.xcassets */,

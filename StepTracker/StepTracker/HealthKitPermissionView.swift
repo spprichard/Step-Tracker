@@ -8,15 +8,19 @@
 import SwiftUI
 import HealthKitUI
 
+// TODO: Hand case where user quits the app when showing HealthKit permission sheet
 struct HealthKitPermissionView: View {
     @Environment(HealthKitManager.self)
     var hkManager
     
+    @Environment(\.dismiss)
+    private var dismiss
+    
     @State
     private var shouldConnectAppleHealth = false
     
-    @Environment(\.dismiss)
-    private var dismiss
+    @Binding
+    var hasSeen: Bool
     
     var body: some View {
         VStack(spacing: 125) {
@@ -39,6 +43,7 @@ struct HealthKitPermissionView: View {
             .buttonStyle(.borderedProminent)
             .tint(.pink)
         }
+        .onAppear { hasSeen = true }
         .padding(20)
         .healthDataAccessRequest(
             store: hkManager.store,
@@ -68,6 +73,6 @@ struct HealthKitPermissionView: View {
 }
 
 #Preview {
-    HealthKitPermissionView()
+    HealthKitPermissionView(hasSeen: .constant(false))
         .environment(HealthKitManager())
 }
