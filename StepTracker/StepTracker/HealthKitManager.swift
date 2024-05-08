@@ -10,6 +10,7 @@ import Observation
 
 @Observable
 final class HealthKitManager {
+    private let calendar = Calendar.current
     let store = HKHealthStore()
     
     static let readTypes: Set<HKQuantityType> = [
@@ -23,6 +24,64 @@ final class HealthKitManager {
     ]
     
     static let HasSeenPermissionSheetKey = "hasSeenPermissionSheet"
+    
+    func fetchStepCount() async throws {
+        let today = calendar.startOfDay(for: .now)
+        guard let endDate = calendar.date(byAdding: .day, value: 1, to: today) else {
+            fatalError("Failed creating endDate")
+        }
+        guard let startDate = calendar.date(byAdding: .day, value: -28, to: endDate) else {
+            fatalError("Failed creating startDate")
+        }
+        
+        let queryPredicate = HKQuery.predicateForSamples(
+            withStart: startDate,
+            end: endDate
+        )
+    
+        let samplePredicate = HKSamplePredicate.quantitySample(
+            type: HKQuantityType(.stepCount),
+            predicate: queryPredicate
+        )
+        
+        let sumOfStepsQuery = HKStatisticsCollectionQueryDescriptor(
+            predicate: samplePredicate,
+            options: .cumulativeSum,
+            anchorDate: endDate,
+            intervalComponents: DateComponents(day: 1)
+        )
+        
+        let stepCounts = try await sumOfStepsQuery.result(for: store)
+    }
+    
+    func fetchWeight() async throws {
+        let today = calendar.startOfDay(for: .now)
+        guard let endDate = calendar.date(byAdding: .day, value: 1, to: today) else {
+            fatalError("Failed creating endDate")
+        }
+        guard let startDate = calendar.date(byAdding: .day, value: -28, to: endDate) else {
+            fatalError("Failed creating startDate")
+        }
+        
+        let queryPredicate = HKQuery.predicateForSamples(
+            withStart: startDate,
+            end: endDate
+        )
+    
+        let samplePredicate = HKSamplePredicate.quantitySample(
+            type: HKQuantityType(.bodyMass),
+            predicate: queryPredicate
+        )
+        
+        let statsQuery = HKStatisticsCollectionQueryDescriptor(
+            predicate: samplePredicate,
+            options: .mostRecent,
+            anchorDate: endDate,
+            intervalComponents: DateComponents(day: 1)
+        )
+        
+        let results = try await statsQuery.result(for: store)
+    }
 }
 
 #if targetEnvironment(simulator)
