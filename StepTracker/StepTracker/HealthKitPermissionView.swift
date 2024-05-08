@@ -45,6 +45,7 @@ struct HealthKitPermissionView: View {
         }
         .onAppear { hasSeen = true }
         .padding(20)
+        .interactiveDismissDisabled()
         .healthDataAccessRequest(
             store: hkManager.store,
             shareTypes: HealthKitManager.writeTypes,
