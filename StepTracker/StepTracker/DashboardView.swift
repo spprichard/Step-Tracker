@@ -37,6 +37,9 @@ struct DashboardView: View {
     @AppStorage(HealthKitManager.HasSeenPermissionSheetKey)
     private var hasSeenPermissionSheet = false
     
+    @Environment(HealthKitManager.self)
+    private var hkManager
+    
     @State
     private var isShowingPermissionSheet = false
     
@@ -100,7 +103,7 @@ struct DashboardView: View {
             }
             .padding()
             .onAppear {
-                isShowingPermissionSheet = !hasSeenPermissionSheet
+                isShowingPermissionSheet = !hasSeenPermissionSheet                
             }
             .navigationTitle("Dasboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
