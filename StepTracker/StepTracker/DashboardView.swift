@@ -47,6 +47,16 @@ struct DashboardView: View {
     @State
     private var selectedStat: HealthMetricContext = .steps
     
+    @State
+    private var rawSelectedDate: Date?
+    
+    private var selectedHealthMetric: HealthMetric? {
+        guard let rawSelectedDate else { return nil }
+        return hkManager.stepData.first {
+            Calendar.current.isDate(rawSelectedDate, inSameDayAs: $0.date)
+        }
+    }
+    
     var averageStepCount: Double {
         guard !hkManager.stepData.isEmpty else {
             return 0
@@ -84,6 +94,22 @@ struct DashboardView: View {
                         .padding(.bottom, 12)
                         
                         Chart {
+                            if let selectedHealthMetric {
+                                RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
+                                    .foregroundStyle(Color.secondary.opacity(0.3))
+                                    .offset(y: -10)
+                                    .annotation(
+                                        position: .top,
+                                        overflowResolution: .init(
+                                            x: .fit,
+                                            y: .disabled
+                                        ),
+                                        content: {
+                                            AnnotationView()
+                                        }
+                                    )
+                            }
+                            
                             RuleMark(y: .value("Average", averageStepCount))
                                 .foregroundStyle(Color.secondary)
                                 .lineStyle(.init(lineWidth: 1, dash: [5]))
@@ -92,11 +118,14 @@ struct DashboardView: View {
                                 BarMark(
                                     x: .value("Date", steps.date, unit: .day),
                                     y: .value("Steps", steps.value)
-                                ).foregroundStyle(Color.pink.gradient)
+                                )
+                                .foregroundStyle(Color.pink.gradient)
+                                .opacity(rawSelectedDate == nil || steps.date == selectedHealthMetric?.date ? 1.0 : 0.3)
                             }
                         }
                         .frame(height: 150)
-                        . chartXAxis {
+                        .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+                        .chartXAxis {
                             AxisMarks {
                                 AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                             }
@@ -156,6 +185,24 @@ struct DashboardView: View {
             )
         }
         .tint(selectedStat.tint)
+    }
+    
+    @ViewBuilder
+    func AnnotationView() -> some View {
+        VStack {
+            Text(selectedHealthMetric?.date ?? .now, format: .dateTime.weekday(.abbreviated).month(.abbreviated))
+                .font(.footnote.bold())
+                .foregroundStyle(.secondary)
+            Text(selectedHealthMetric?.value ?? 0, format: .number.precision(.fractionLength(0)))
+                .fontWeight(.heavy)
+                .foregroundStyle(.pink)
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color(.secondarySystemBackground))
+                .shadow(color: .secondary.opacity(0.45), radius: 2, x: 2, y: 2)
+        )
     }
 }
 
