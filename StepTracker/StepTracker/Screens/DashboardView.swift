@@ -75,77 +75,11 @@ struct DashboardView: View {
                         }
                     }.pickerStyle(.segmented)
                     
-                    VStack {
-                        NavigationLink(value: selectedStat) {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Label("Steps", systemImage: "figure.walk")
-                                        .font(.title3.bold())
-                                        .foregroundStyle(.pink)
-                                    
-                                    Text("Avg: \(Int(averageStepCount)) Steps")
-                                        .font(.caption)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                            }
-                        }
-                        .foregroundStyle(.secondary)
-                        .padding(.bottom, 12)
-                        
-                        Chart {
-                            if let selectedHealthMetric {
-                                RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
-                                    .foregroundStyle(Color.secondary.opacity(0.3))
-                                    .offset(y: -10)
-                                    .annotation(
-                                        position: .top,
-                                        overflowResolution: .init(
-                                            x: .fit,
-                                            y: .disabled
-                                        ),
-                                        content: {
-                                            AnnotationView()
-                                        }
-                                    )
-                            }
-                            
-                            RuleMark(y: .value("Average", averageStepCount))
-                                .foregroundStyle(Color.secondary)
-                                .lineStyle(.init(lineWidth: 1, dash: [5]))
-                            
-                            ForEach(hkManager.stepData) { steps in
-                                BarMark(
-                                    x: .value("Date", steps.date, unit: .day),
-                                    y: .value("Steps", steps.value)
-                                )
-                                .foregroundStyle(Color.pink.gradient)
-                                .opacity(rawSelectedDate == nil || steps.date == selectedHealthMetric?.date ? 1.0 : 0.3)
-                            }
-                        }
-                        .frame(height: 150)
-                        .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-                        .chartXAxis {
-                            AxisMarks {
-                                AxisValueLabel(format: .dateTime.month(.abbreviated).day())
-                            }
-                        }
-                        .chartYAxis {
-                            AxisMarks { value in
-                                AxisGridLine()
-                                    .foregroundStyle(.secondary.opacity(0.3))
-                                
-                                AxisValueLabel(
-                                    (value.as(Double.self) ?? 0)
-                                        .formatted(.number.notation(.compactName))
-                                )
-                                    
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
-                    
+                    StepBarChart(
+                        selectedStat: .steps,
+                        chartData: hkManager.stepData
+                    )
+                                        
                     VStack(alignment: .leading) {
                         VStack(alignment: .leading) {
                             Label("Averages", systemImage: "calendar")
