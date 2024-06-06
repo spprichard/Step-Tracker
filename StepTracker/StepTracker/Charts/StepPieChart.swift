@@ -11,6 +11,19 @@ import SwiftUI
 struct StepPieChart: View {
     var chartData: [WeekDayChartData]
     
+    private var selectedWeekDay: WeekDayChartData? {
+        guard let rawSelectedChartValue else { return nil }
+        var total = 0.0
+        
+        return chartData.first {
+            total += $0.value
+            return total >= rawSelectedChartValue
+        }
+    }
+    
+    @State
+    private var rawSelectedChartValue: Double?
+    
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
@@ -33,11 +46,17 @@ struct StepPieChart: View {
                     )
                     .foregroundStyle(.pink.gradient)
                     .cornerRadius(4)
+                    .opacity(selectedWeekDay?.date.weekDayInt == weekDay.date.weekDayInt ? 1.0 : 0.3)
                 }
-            }.frame(height: 240)
+            }
+            .frame(height: 240)
+            .chartAngleSelection(value: $rawSelectedChartValue)
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
+        .onChange(of: rawSelectedChartValue) {
+            print("\(selectedWeekDay?.date.weekDayWideTitle)")
+        }
     }
 }
 

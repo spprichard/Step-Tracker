@@ -83,7 +83,7 @@ struct DashboardView: View {
                     StepPieChart(
                         chartData:
                             ChartMath.averageWeekDayCount(
-                                for: HealthMetric.mockData
+                                for: hkManager.stepData
                             )
                     )
                 }
