@@ -13,6 +13,9 @@ final class HealthKitManager {
     private let calendar = Calendar.current
     let store = HKHealthStore()
     
+    var stepData: [HealthMetric] = []
+    var weightData: [HealthMetric] = []
+    
     static let readTypes: Set<HKQuantityType> = [
         HKQuantityType(.stepCount),
         HKQuantityType(.bodyMass)
@@ -25,7 +28,7 @@ final class HealthKitManager {
     
     static let HasSeenPermissionSheetKey = "hasSeenPermissionSheet"
     
-    func fetchStepCount() async throws {
+    func fetchStepCount() async {
         let today = calendar.startOfDay(for: .now)
         guard let endDate = calendar.date(byAdding: .day, value: 1, to: today) else {
             fatalError("Failed creating endDate")
@@ -51,10 +54,21 @@ final class HealthKitManager {
             intervalComponents: DateComponents(day: 1)
         )
         
-        let stepCounts = try await sumOfStepsQuery.result(for: store)
+        do {
+            let stepCounts = try await sumOfStepsQuery.result(for: store)
+            stepData = stepCounts.statistics().map { stat in
+                HealthMetric(
+                    date: stat.startDate,
+                    value: stat.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                )
+            }
+        } catch let error {
+            // TODO: Properly Handle
+            fatalError(error.localizedDescription)
+        }
     }
     
-    func fetchWeight() async throws {
+    func fetchWeight() async {
         let today = calendar.startOfDay(for: .now)
         guard let endDate = calendar.date(byAdding: .day, value: 1, to: today) else {
             fatalError("Failed creating endDate")
@@ -80,7 +94,18 @@ final class HealthKitManager {
             intervalComponents: DateComponents(day: 1)
         )
         
-        let results = try await statsQuery.result(for: store)
+        do {
+            let results = try await statsQuery.result(for: store)
+            weightData = results.statistics().map { stat in
+                HealthMetric(
+                    date: stat.startDate,
+                    value: stat.mostRecentQuantity()?.doubleValue(for: .pound()) ?? 0
+                )
+            }
+        } catch let error {
+            // Properly Handle
+            fatalError(error.localizedDescription)
+        }
     }
 }
 
