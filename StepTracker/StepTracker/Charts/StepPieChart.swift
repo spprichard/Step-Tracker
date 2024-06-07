@@ -22,7 +22,7 @@ struct StepPieChart: View {
     }
     
     @State
-    private var rawSelectedChartValue: Double?
+    private var rawSelectedChartValue: Double? = 0
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -42,6 +42,7 @@ struct StepPieChart: View {
                     SectorMark(
                         angle: .value("Average Steps", weekDay.value),
                         innerRadius: .ratio(0.618),
+                        outerRadius: selectedWeekDay?.date.weekDayInt == weekDay.date.weekDayInt ? 140 : 110,
                         angularInset: 1
                     )
                     .foregroundStyle(.pink.gradient)
@@ -50,7 +51,25 @@ struct StepPieChart: View {
                 }
             }
             .frame(height: 240)
-            .chartAngleSelection(value: $rawSelectedChartValue)
+            .chartBackground { proxy in
+                GeometryReader { geo in
+                    if let plotFrame = proxy.plotFrame {
+                        let frame = geo[plotFrame]
+                        if let selectedWeekDay {
+                            VStack {
+                                Text(selectedWeekDay.date.weekDayWideTitle)
+                                    .font(.title3.bold())
+                                    .contentTransition(.identity)
+                                Text(selectedWeekDay.value, format: .number.precision(.fractionLength(0)))
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.secondary)
+                                    .contentTransition(.numericText())
+                            }.position(x: frame.midX, y: frame.midY)
+                        }
+                    }
+                }
+            }
+            .chartAngleSelection(value: $rawSelectedChartValue.animation(.easeInOut))
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
