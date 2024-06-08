@@ -15,6 +15,10 @@ struct WeightLineChart: View {
     @State
     private var rawSelectedDate: Date?
     
+    private var minValue: Double {
+        chartData.map { $0.value }.min() ?? 0
+    }
+    
     var body: some View {
         VStack {
             NavigationLink(value: selectedStat) {
@@ -35,19 +39,28 @@ struct WeightLineChart: View {
             .padding(.bottom, 12)
             
             Chart {
+                RuleMark(y: .value("Goal", 155))
+                    .lineStyle(.init(lineWidth: 1, dash: [5]))
+                
                 ForEach(chartData) { weight in
                     AreaMark(
                         x: .value("Day", weight.date, unit: .day),
-                        y: .value("Weight", weight.value)
+                        yStart: .value("Weight", weight.value),
+                        yEnd: .value("Min Value", minValue)
                     ).foregroundStyle(Gradient(colors: [.indigo, .clear]))
                     
                     LineMark(
                         x: .value("Day", weight.date, unit: .day),
                         y: .value("Weight", weight.value)
-                    ).foregroundStyle(.indigo)
+                    )
+                    .foregroundStyle(.indigo)
+                    .interpolationMethod(.catmullRom)
+                    .symbol(.circle)
+                    
                 }
             }
             .frame(height: 150)
+            .chartYScale(domain: .automatic(includesZero: false))
             .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
             .chartXAxis {
                 AxisMarks {
