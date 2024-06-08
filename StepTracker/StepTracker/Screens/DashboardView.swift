@@ -75,22 +75,36 @@ struct DashboardView: View {
                         }
                     }.pickerStyle(.segmented)
                     
-                    StepBarChart(
-                        selectedStat: .steps,
-                        chartData: hkManager.stepData
-                    )
-                    
-                    StepPieChart(
-                        chartData:
-                            ChartMath.averageWeekDayCount(
-                                for: hkManager.stepData
-                            )
-                    )
+                    switch selectedStat {
+                    case .steps:
+                        StepBarChart(
+                            selectedStat: .steps,
+                            chartData: hkManager.stepData
+                        )
+                        
+                        StepPieChart(
+                            chartData:
+                                ChartMath.averageWeekDayCount(
+                                    for: hkManager.stepData
+                                )
+                        )
+                    case .weight:
+                        WeightLineChart(
+                            selectedStat: .weight,
+                            chartData: hkManager.weightData
+                        )
+                    case .workouts:
+                        ContentUnavailableView(
+                            "Feature Not Ready",
+                            systemImage: "scalemass.fill"
+                        )
+                    }
                 }
             }
             .padding()
             .task {
                 await hkManager.fetchStepCount()
+                await hkManager.fetchWeight()
                 isShowingPermissionSheet = !hasSeenPermissionSheet
             }
             .navigationTitle("Dasboard")

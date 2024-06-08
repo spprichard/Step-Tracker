@@ -19,6 +19,13 @@ struct WeightLineChart: View {
         chartData.map { $0.value }.min() ?? 0
     }
     
+    private var selectedHealthMetric: HealthMetric? {
+        guard let rawSelectedDate else { return nil }
+        return chartData.first {
+            Calendar.current.isDate(rawSelectedDate, inSameDayAs: $0.date)
+        }
+    }
+    
     var body: some View {
         VStack {
             NavigationLink(value: selectedStat) {
@@ -39,6 +46,22 @@ struct WeightLineChart: View {
             .padding(.bottom, 12)
             
             Chart {
+                if let selectedHealthMetric {
+                    RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
+                        .foregroundStyle(Color.secondary.opacity(0.3))
+                        .offset(y: -10)
+                        .annotation(
+                            position: .top,
+                            overflowResolution: .init(
+                                x: .fit,
+                                y: .disabled
+                            ),
+                            content: {
+                                AnnotationView()
+                            }
+                        )
+                }
+                
                 RuleMark(y: .value("Goal", 155))
                     .lineStyle(.init(lineWidth: 1, dash: [5]))
                 
@@ -88,6 +111,32 @@ struct WeightLineChart: View {
         )
     }
 }
+
+extension WeightLineChart {
+    @ViewBuilder
+    func AnnotationView() -> some View {
+        VStack {
+            Text(selectedHealthMetric?.date ?? .now, format:
+                .dateTime
+                .weekday(.abbreviated)
+                .day(.defaultDigits)
+                .month(.abbreviated)
+            )
+                .font(.footnote.bold())
+                .foregroundStyle(.secondary)
+            Text(selectedHealthMetric?.value ?? 0, format: .number.precision(.fractionLength(1)))
+                .fontWeight(.heavy)
+                .foregroundStyle(.indigo)
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color(.secondarySystemBackground))
+                .shadow(color: .secondary.opacity(0.45), radius: 2, x: 2, y: 2)
+        )
+    }
+}
+
 
 #Preview {
     WeightLineChart(
